@@ -1,6 +1,7 @@
-from flask import Flask, request, redirect
 import random
 import requests
+from flask import Flask, request, redirect
+from cachetools import TTLCache
 from urllib.parse import urlparse, urlunparse
 
 app = Flask(__name__)
@@ -13,12 +14,19 @@ servers = [
     'https://server4.oilnwine.live'
 ]
 
+# Cache for server status with a TTL of 30 seconds
+server_status_cache = TTLCache(maxsize=100, ttl=30)
+
 def is_server_up(server):
+    if server in server_status_cache:
+        return server_status_cache[server]
     try:
-        response = requests.get(server, timeout=5)
-        return response.status_code == 200
+        response = requests.get(server + "/login", timeout=5)
+        is_up = response.status_code == 200
     except requests.RequestException:
-        return False
+        is_up = False
+    server_status_cache[server] = is_up
+    return is_up
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
@@ -42,4 +50,3 @@ def load_balancer(path):
     
     # Forward the request to the selected server
     return redirect(new_url, code=307)
-
