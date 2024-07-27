@@ -7,9 +7,10 @@ app = Flask(__name__)
 
 # List of backend servers
 servers = [
-    'http://server1.oilnwine.live',
-    'http://server2.oilnwine.live',
-    'http://server3.oilnwine.live'
+    'https://server1.oilnwine.live',
+    'https://server2.oilnwine.live',
+    'https://server3.oilnwine.live',
+    'https://server4.oilnwine.live'
 ]
 
 def is_server_up(server):
