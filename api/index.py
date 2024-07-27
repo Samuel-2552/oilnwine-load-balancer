@@ -15,7 +15,7 @@ servers = [
 
 def is_server_up(server):
     try:
-        response = requests.get(server, timeout=1)
+        response = requests.get(server, timeout=5)
         return response.status_code == 200
     except requests.RequestException:
         return False
